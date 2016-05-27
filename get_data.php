@@ -11,4 +11,5 @@ $result = $db->query($sql);
 $result = $result->fetch_all(MYSQLI_ASSOC);
 
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
 echo json_encode($result);
