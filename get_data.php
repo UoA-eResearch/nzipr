@@ -10,6 +10,11 @@ $result = $db->query($sql);
 
 $result = $result->fetch_all(MYSQLI_ASSOC);
 
+foreach ($result as &$r) {
+  $r['year'] = (int)$r['year'];
+  $r['$'] = (int)$r['$'];
+}
+
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
 echo json_encode($result);
