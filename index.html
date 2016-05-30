@@ -115,7 +115,7 @@
           window.cc_map = cc_map;
           $.getJSON("cc_names.json", function(cc_names) {
             window.cc_names = cc_names;
-            $.getJSON("http://webdb.cer.auckland.ac.nz/nzipr/get_data.php", function(data) {
+            $.getJSON("get_data.php", function(data) {
               window.data = data;
               renderData();
             });
