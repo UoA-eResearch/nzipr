@@ -17,7 +17,7 @@ $(function() {
     sum /= 1E4;
     sum = Math.round(sum);
     sum /= 1E2
-    return sum.toLocaleString({ style: 'currency', currency: 'USD' }) + 'M';
+    return '$' + sum.toLocaleString() + 'M';
   }
   
   // Timeline
@@ -142,6 +142,7 @@ $(function() {
       var latlng = window.cc_map[i];
       var center = new google.maps.LatLng(latlng[0], latlng[1]);
       var countryName = window.cc_names[i];
+      
       if (window.countryCircles[i]) {
         window.countryCircles[i].setRadius(radius);
         window.countryLabels[i].set('text', countryName + ': ' + window.$format(aid_sum));
@@ -154,7 +155,8 @@ $(function() {
           fillOpacity: 0.35,
           map: window.map,
           center: center,
-          radius: radius
+          radius: radius,
+          recipient_iso: i
         });
         window.countryLabels[i] = new MapLabel({
           text: countryName + ': ' + window.$format(aid_sum),
@@ -164,7 +166,11 @@ $(function() {
           fontColor: 'black',
           strokeColor: 'white',
           strokeWeight: 0,
-          align: 'center'
+          align: 'center',
+          recipient_iso: i
+        });
+        window.countryCircles[i].addListener('click', function() {
+          displayInfoWindow(this);
         });
       }
     }
@@ -174,5 +180,94 @@ $(function() {
         countryLabels[i].set('text', '');
       }
     }
+    refreshInfoWindow();
+  }
+  
+  function getDonorsForRecipient(recipient) {
+    var donors = {}
+    for (var e of window.data) {
+      if (recipient == e.recipient_iso && e.year >= window.min && e.year <= window.max) {
+        if (donors[e.donor_iso]) {
+          donors[e.donor_iso] += e.$;
+        } else {
+          donors[e.donor_iso] = e.$;
+        }
+      }
+    }
+    var array = [];
+    for (var i in donors) {
+      array.push([window.cc_names[i], '$' + donors[i].toLocaleString()]);
+    }
+    return array;
+  }
+  
+  function getAidTypesForRecipientDonor(recipient, donor) {
+    var types = {}
+    for (var e of window.data) {
+      if (recipient == e.recipient_iso && e.year >= window.min && e.year <= window.max) {
+        if (!donor || donor == e.donor_iso) {
+          if (types[e.aiddata_sector_name]) {
+            types[e.aiddata_sector_name] += e.$;
+          } else {
+            types[e.aiddata_sector_name] = e.$;
+          }
+        }
+      }
+    }
+    var array = [];
+    for (var i in types) {
+      array.push([i, '$' + types[i].toLocaleString()]);
+    }
+    return array;
+  }
+  
+  function displayInfoWindow(target) {
+    var donors = getDonorsForRecipient(target.recipient_iso);
+    var aid_types = getAidTypesForRecipientDonor(target.recipient_iso);
+    var contentString = '<div style="width: 100%"><div style="width: 50%; float: left"><table id="donors" class="datatable"></table></div><div style="width: 50%; float: left"><table id="aid_types" class="datatable"><table></div>';
+    
+    if (window.infowindow) window.infowindow.close();
+    window.infowindow = new google.maps.InfoWindow({
+      content: contentString,
+      position: target.center,
+      target: target
+    });
+    window.infowindow.addListener('domready', function() {
+      $('#donors').DataTable({
+        data: donors,
+        lengthChange: false,
+        pageLength: 5,
+        order: [[1, 'desc']],
+        columns: [
+            { title: "Donor country" },
+            { title: "Amount donated" },
+        ]
+      });
+      $('#aid_types').DataTable({
+        data: aid_types,
+        lengthChange: false,
+        pageLength: 5,
+        order: [[1, 'desc']],
+        columns: [
+            { title: "Type" },
+            { title: "Amount donated" }
+        ]
+      });
+    });
+    window.infowindow.open(map);
+  }
+  
+  function refreshInfoWindow() {
+    var donors = getDonorsForRecipient(window.infowindow.target.recipient_iso);
+    var aid_types = getAidTypesForRecipientDonor(window.infowindow.target.recipient_iso);
+    var table = $('#donors').DataTable({
+      retrieve: true
+    });
+    table.clear().rows.add(donors).draw();
+    
+    table = $('#aid_types').DataTable({
+      retrieve: true
+    });
+    table.clear().rows.add(aid_types).draw();
   }
 });
