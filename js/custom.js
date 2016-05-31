@@ -224,7 +224,7 @@ $(function() {
   function displayInfoWindow(target) {
     var donors = getDonorsForRecipient(target.recipient_iso);
     var aid_types = getAidTypesForRecipientDonor(target.recipient_iso);
-    var contentString = '<div style="width: 100%"><div style="width: 50%; float: left"><table id="donors" class="datatable"></table></div><div style="width: 50%; float: left"><table id="aid_types" class="datatable"><table></div>';
+    var contentString = '<div style="width: 100%"><div style="width: 50%; float: left"><table id="donors" width="100%"></table></div><div style="width: 50%; float: left"><table id="aid_types" width="100%"><table></div>';
     
     if (window.infowindow) window.infowindow.close();
     window.infowindow = new google.maps.InfoWindow({
@@ -249,7 +249,7 @@ $(function() {
         pageLength: 5,
         order: [[1, 'desc']],
         columns: [
-            { title: "Type" },
+            { title: "Sector" },
             { title: "Amount donated" }
         ]
       });
