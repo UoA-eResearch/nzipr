@@ -183,14 +183,16 @@ $(function() {
     refreshInfoWindow();
   }
   
-  function getDonorsForRecipient(recipient) {
+  function getDonorsForRecipient(recipient, aid_type) {
     var donors = {}
     for (var e of window.data) {
       if (recipient == e.recipient_iso && e.year >= window.min && e.year <= window.max) {
-        if (donors[e.donor_iso]) {
-          donors[e.donor_iso] += e.$;
-        } else {
-          donors[e.donor_iso] = e.$;
+        if (!aid_type || !aid_type.length || aid_type.indexOf(e.aiddata_sector_name) != -1) {
+          if (donors[e.donor_iso]) {
+            donors[e.donor_iso] += e.$;
+          } else {
+            donors[e.donor_iso] = e.$;
+          }
         }
       }
     }
@@ -201,11 +203,11 @@ $(function() {
     return array;
   }
   
-  function getAidTypesForRecipientDonor(recipient, donor) {
+  function getAidTypesForRecipient(recipient, donor) {
     var types = {}
     for (var e of window.data) {
       if (recipient == e.recipient_iso && e.year >= window.min && e.year <= window.max) {
-        if (!donor || donor == e.donor_iso) {
+        if (!donor || !donor.length || donor.indexOf(window.cc_names[e.donor_iso]) != -1) {
           if (types[e.aiddata_sector_name]) {
             types[e.aiddata_sector_name] += e.$;
           } else {
@@ -223,7 +225,7 @@ $(function() {
   
   function displayInfoWindow(target) {
     var donors = getDonorsForRecipient(target.recipient_iso);
-    var aid_types = getAidTypesForRecipientDonor(target.recipient_iso);
+    var aid_types = getAidTypesForRecipient(target.recipient_iso);
     var contentString = '<div style="width: 100%"><div style="width: 50%; float: left"><table id="donors" width="100%"></table></div><div style="width: 50%; float: left"><table id="aid_types" width="100%"><table></div>';
     
     if (window.infowindow) window.infowindow.close();
@@ -253,21 +255,90 @@ $(function() {
             { title: "Amount donated" }
         ]
       });
+      $('table.dataTable tbody').on( 'click', 'tr', function () {
+        $(this).toggleClass('selected');
+        refreshInfoWindow();
+      });
     });
     window.infowindow.open(map);
   }
   
   function refreshInfoWindow() {
-    var donors = getDonorsForRecipient(window.infowindow.target.recipient_iso);
-    var aid_types = getAidTypesForRecipientDonor(window.infowindow.target.recipient_iso);
-    var table = $('#donors').DataTable({
+    if (!window.infowindow) return;
+
+    var donor_table = $('#donors').DataTable({
       retrieve: true
     });
-    table.clear().rows.add(donors).draw();
     
-    table = $('#aid_types').DataTable({
+    var aid_type_table = $('#aid_types').DataTable({
       retrieve: true
     });
-    table.clear().rows.add(aid_types).draw();
+    
+    var selected_donors = donor_table.rows('.selected').data().toArray();
+    var selected_aid_types = aid_type_table.rows('.selected').data().toArray();
+    
+    var selected_donors_names = [];
+    for (var i of selected_donors) {
+      selected_donors_names.push(i[0]);
+    }
+    var selected_aid_types_names = [];
+    for (var i of selected_aid_types) {
+      selected_aid_types_names.push(i[0]);
+    }
+    
+    console.log(selected_donors_names, selected_aid_types_names);
+    
+    var donors = getDonorsForRecipient(window.infowindow.target.recipient_iso, selected_aid_types_names);
+    var aid_types = getAidTypesForRecipient(window.infowindow.target.recipient_iso, selected_donors_names);
+    
+    var seen_countries = [];
+    // Update existing rows
+    donor_table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+      var d = this.data();
+      for (var pair of donors) {
+        if (pair[0] == d[0]) {
+          d[1] = pair[1];
+          seen_countries.push(d[0]);
+          this.invalidate();
+          return;
+        }
+      }
+      $(this.node()).addClass('marked-for-deletion');
+    });
+    // Remove no longer existing rows
+    donor_table.rows('.marked-for-deletion').remove();
+    // Add non-existing rows
+    for (var pair of donors) {
+      if (seen_countries.indexOf(pair[0]) == -1) {
+        donor_table.row.add(pair);
+      }
+    }
+    // Re-render the table
+    donor_table.draw(false);
+    
+    var seen_aid_types = [];
+    // Update existing rows
+    aid_type_table.rows().every(function(rowIdx, tableLoop, rowLoop) {
+      var d = this.data();
+      for (var pair of aid_types) {
+        if (pair[0] == d[0]) {
+          d[1] = pair[1];
+          seen_aid_types.push(d[0]);
+          this.invalidate();
+          return;
+        }
+      }
+      $(this.node()).addClass('marked-for-deletion');
+    });
+    // Remove no longer existing rows
+    aid_type_table.rows('.marked-for-deletion').remove();
+    // Add non-existing rows
+    for (var pair of aid_types) {
+      if (seen_aid_types.indexOf(pair[0]) == -1) {
+        aid_type_table.row.add(pair);
+      }
+    }
+    // Re-render the table
+    aid_type_table.draw(false);
   }
 });
