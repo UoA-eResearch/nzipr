@@ -25,3 +25,7 @@ html, body, #timemap, #map {
   font-size: 12px;
   background: #CCCCCC;
 }
+
+.dataTable tbody tr {
+  cursor: pointer;
+}

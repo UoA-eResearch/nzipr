@@ -172,6 +172,12 @@ $(function() {
         window.countryCircles[i].addListener('click', function() {
           displayInfoWindow(this);
         });
+        window.countryCircles[i].addListener('mouseover', function() {
+          this.setOptions({fillColor: '#FF199B', strokeColor: '#FF199B'});
+        });
+        window.countryCircles[i].addListener('mouseout', function() {
+          this.setOptions({fillColor: '#FF0000', strokeColor: '#FF0000'});
+        });
       }
     }
     for (var i in countryCircles) {
@@ -226,7 +232,7 @@ $(function() {
   function displayInfoWindow(target) {
     var donors = getDonorsForRecipient(target.recipient_iso);
     var aid_types = getAidTypesForRecipient(target.recipient_iso);
-    var contentString = '<div style="width: 100%"><div style="width: 50%; float: left"><table id="donors" width="100%"></table></div><div style="width: 50%; float: left"><table id="aid_types" width="100%"><table></div>';
+    var contentString = '<div style="width: 100%"><div style="width: 50%; float: left"><table id="donors" width="100%"></table></div><div style="width: 50%; float: left"><table id="aid_types" width="100%"></table></div></div><span class="help">Click one of the rows to filter the opposite table by that country/sector.</span>';
     
     if (window.infowindow) window.infowindow.close();
     window.infowindow = new google.maps.InfoWindow({
