@@ -167,6 +167,7 @@ $(function() {
           strokeColor: 'white',
           strokeWeight: 0,
           align: 'center',
+          minZoom: 4,
           recipient_iso: i
         });
         window.countryCircles[i].addListener('click', function() {
