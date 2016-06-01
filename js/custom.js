@@ -170,7 +170,9 @@ $(function() {
           recipient_iso: i
         });
         window.countryCircles[i].addListener('click', function() {
+          window.selected_country = this.recipient_iso;
           displayInfoWindow(this);
+          displayLines(this);
         });
         window.countryCircles[i].addListener('mouseover', function() {
           this.setOptions({fillColor: '#FF199B', strokeColor: '#FF199B'});
@@ -187,6 +189,84 @@ $(function() {
       }
     }
     refreshInfoWindow();
+    refreshLines();
+  }
+  
+  function displayLines(target) {
+    var donors = {};
+    for (var e of window.data) {
+      if (target.recipient_iso == e.recipient_iso && e.year >= window.min && e.year <= window.max) {
+        if (donors[e.donor_iso]) {
+          donors[e.donor_iso] += e.$;
+        } else {
+          donors[e.donor_iso] = e.$;
+        }
+      }
+    }
+    var latlng_recipient = window.cc_map[target.recipient_iso];
+    latlng_recipient = {lat: latlng_recipient[0], lng: latlng_recipient[1]}
+    if (window.lines) {
+      for (var i in window.lines) {
+        window.lines[i].setMap(null);
+      }
+    }
+    window.lines = {};
+    for (var i in donors) {
+      var latlng_donor = window.cc_map[i];
+      latlng_donor = {lat: latlng_donor[0], lng: latlng_donor[1]};
+      var aid_sum = donors[i];
+      var weight = aid_sum / 1E9;
+      if (weight < .5) weight = .5;
+      window.lines[i] = new google.maps.Polyline({
+        map: map,
+        path: [latlng_recipient, latlng_donor],
+        geodesic: false,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1.0,
+        strokeWeight: weight
+      });
+    }
+  }
+  
+  function refreshLines() {
+    if (!window.selected_country) return;
+    var donors = {};
+    for (var e of window.data) {
+      if (window.selected_country == e.recipient_iso && e.year >= window.min && e.year <= window.max) {
+        if (donors[e.donor_iso]) {
+          donors[e.donor_iso] += e.$;
+        } else {
+          donors[e.donor_iso] = e.$;
+        }
+      }
+    }
+    var latlng_recipient = window.cc_map[window.selected_country];
+    latlng_recipient = {lat: latlng_recipient[0], lng: latlng_recipient[1]}
+    for (var i in donors) {
+      var latlng_donor = window.cc_map[i];
+      latlng_donor = {lat: latlng_donor[0], lng: latlng_donor[1]};
+      var aid_sum = donors[i];
+      var weight = aid_sum / 1E9;
+      if (weight < .5) weight = .5;
+      if (window.lines[i]) {
+        window.lines[i].setOptions({strokeWeight: weight});
+      } else {
+        window.lines[i] = new google.maps.Polyline({
+          map: map,
+          path: [latlng_recipient, latlng_donor],
+          geodesic: false,
+          strokeColor: '#FF0000',
+          strokeOpacity: 1.0,
+          strokeWeight: weight
+        });
+      }
+    }
+    donors = Object.keys(donors);
+    for (var i in window.lines) {
+      if (donors.indexOf(i) == -1) {
+        window.lines[i].setOptions({strokeWeight: 0});
+      }
+    }
   }
   
   function getDonorsForRecipient(recipient, aid_type) {
