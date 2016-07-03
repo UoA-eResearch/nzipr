@@ -86,8 +86,8 @@ export function onDocumentMouseDown( event ) {
   }
 
   dragging = true;
-  pressX = mouseX;
-  pressY = mouseY;
+  mouseX = event.x;
+  mouseY = event.y;
   rotateTargetX = undefined;
   rotateTargetX = undefined;
   stopAutoRotate();
@@ -95,7 +95,7 @@ export function onDocumentMouseDown( event ) {
 
 export function onDocumentMouseUp() {
   dragging = false;
-  startAutoRotate();
+  // startAutoRotate();
 }
 
 export function handleMWheel( delta, camera ) {

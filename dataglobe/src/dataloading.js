@@ -30,8 +30,7 @@ export function loadCountryCodes( isoFile, callback ) {
   _getDataFromServer( isoFile, callback );
 }
 
-export function loadContentData( callback ) {
-  const filePath = encodeURI( 'categories/All.json' );
+export function loadContentData( filePath, callback ) {
   _getDataFromServer( filePath, callback );
 }
 

@@ -26,7 +26,7 @@ let progressViz = null;
 // Holds all the data we get back from the server
 let _countryLookup = null;
 let _latLonData = null;
-let _sampleData = null;
+let _data = null;
 
 // Used with our data pump. Allows us to evenly distribute the points
 let _minDataTimestamp = null;
@@ -40,7 +40,7 @@ function getDataForTick( startTime, endTime ) {
 
   // If we're starting at the beginning, all our data is technically "remaining"
   if (startTime === _minDataTimestamp.getTime()) {
-    _remainingData = _sampleData;
+    _remainingData = _data;
   }
 
   // This will split our array into two pieces: those points which fall into
@@ -81,6 +81,8 @@ function startDataPump() {
       lastTime = _minDataTimestamp.getTime();
       currPollingInterval = 0;
     }
+
+    document.getElementById( 'time_display' ).innerHTML = _minDataTimestamp.getFullYear();
 
     visualize.initVisualization( dataToViz );
     progressViz.handleProgressUpdate( currPollingInterval / numPollingIntervals );
@@ -159,7 +161,7 @@ function initScene() {
   THREEx.WindowResize( renderer, camera ); // eslint-disable-line new-cap
 
   // Get the globe spinning (defined in mousekeyboard.js)
-  mouseKeyboard.startAutoRotate();
+  // mouseKeyboard.startAutoRotate();
 }
 
 function animate() {
@@ -214,21 +216,24 @@ if (!Detector.webgl) {
     _countryLookup = isoData;
     dataLoading.loadWorldPins( 'country_lat_lon.json', ( latLonData ) => {
       _latLonData = latLonData;
-      dataLoading.loadRandomizedContentData( 2000, _countryLookup, ( sampleData ) => {
+      dataLoading.loadContentData( '../get_data.php', ( data ) => {
         // need to convert all the timestamps to JS dates
-        const mappedSampleData = us.map( sampleData, function mapSampleData( point ) {
-          if (typeof point.time === Date) {
-            return point;
-          }
-          point.time = new Date( point.time );
-          return point;
+        const mappedData = us.map( data, function mapData( point ) {
+          return {
+            src: _countryLookup[point.donor_iso],
+            dest: _countryLookup[point.recipient_iso],
+            colour: 'g',
+            sector: point.aiddata_sector_name,
+            amount: point.$,
+            time: new Date(point.year),
+          };
         });
 
-        _sampleData = us.sortBy( mappedSampleData, 'time' );
-        _minDataTimestamp = _sampleData[0].time;
-        _maxDataTimestamp = _sampleData[ _sampleData.length - 1 ].time;
+        _data = us.sortBy( mappedData, 'time' );
+        _minDataTimestamp = _data[0].time;
+        _maxDataTimestamp = _data[ _data.length - 1 ].time;
         const countryData = geopins.loadGeoData( _latLonData, _countryLookup );
-        visualize.buildDataVizGeometries( _sampleData, countryData );
+        visualize.buildDataVizGeometries( _data, countryData );
 
         animate();
         startDataPump();
