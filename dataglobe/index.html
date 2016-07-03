@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Interactive Globe: Source/Destination Data Visualization</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="user-scalable=no, minimum-scale=1.0, maximum-scale=1.0, initial-scale=1">
+		<link rel="stylesheet" type="text/css" href="style.css">
+	</head>
+
+	<body id="dataviz" class="">
+		<div id="wrapper">
+		<div id="loading">
+			<h2>Loading Data. Please wait...</h2>
+		</div>
+
+		<div id="visualization" >
+			<!-- 2D overlay elements go in here -->
+
+			<div id="glContainer">
+				<!-- 3D webgl canvas here -->
+			</div>
+		</div>
+
+    <!-- All other hud can go here-->
+    <div id="hudHeader" class="overlayCountries noPointer">
+      <h1 class="noPointer">Data Visualization Globe
+        <div class="subtitle">An interactive visualization of source/destination data over time.</div>
+      </h1>
+    </div>
+
+		<div id="legend" class="overlayCountries">
+		</div>
+
+		<div id="progress" class="overlayCountries">
+		</div>
+
+		<footer>
+			<span>Based on <a href="https://www.chromeexperiments.com/experiment/arms-globe">WebGL Arms Globe</a>, a <a href="https://www.chromeexperiments.com/">Chrome Experiment</a></span>
+		</footer>
+    </div> <!-- End tag for 'wrapper' div -->
+
+		<!--
+		Custom Shaders
+
+		Inspired by: https://github.com/mrdoob/three.js/issues/2118
+		and: http://stackoverflow.com/questions/12337660/three-js-adjusting-opacity-of-individual-particles
+		-->
+		<script type="x-shader/x-vertex" id="vertexshader">
+			attribute float alpha;
+			attribute vec3 customColor;
+
+			varying float vAlpha;
+			varying vec3 vColor;
+
+			void main() {
+				vAlpha = alpha;
+				vColor = customColor;
+
+				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+				gl_PointSize = 25.0;
+				gl_Position = projectionMatrix * mvPosition;
+			}
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentshader">
+			uniform vec3 color;
+			uniform sampler2D texture;
+
+			varying vec3 vColor;
+			varying float vAlpha;
+
+			void main() {
+				gl_FragColor = vec4( color * vColor, 1 );
+				gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );
+				gl_FragColor.a *= vAlpha;
+			}
+		</script>
+
+		<script src="public/thirdparty.min.js" type="text/javascript"></script>
+		<script src="public/dataglobe.min.js" type="text/javascript"></script>
+	</body>
+</html>

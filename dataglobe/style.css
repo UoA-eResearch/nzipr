@@ -1,0 +1,207 @@
+/* Import Roboto Font */
+@font-face {
+    font-family: 'Roboto';
+    src: url('roboto/roboto-regular-webfont.eot');
+    src: url('roboto/roboto-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('roboto/roboto-regular-webfont.woff') format('woff'),
+         url('roboto/roboto-regular-webfont.ttf') format('truetype'),
+         url('roboto/roboto-regular-webfont.svg#RobotoRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('roboto/roboto-bold-webfont.eot');
+    src: url('roboto/roboto-bold-webfont.eot?#iefix') format('embedded-opentype'),
+         url('roboto/roboto-bold-webfont.woff') format('woff'),
+         url('roboto/roboto-bold-webfont.ttf') format('truetype'),
+         url('roboto/roboto-bold-webfont.svg#RobotoBold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('roboto/roboto-bolditalic-webfont.eot');
+    src: url('roboto/roboto-bolditalic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('roboto/roboto-bolditalic-webfont.woff') format('woff'),
+         url('roboto/roboto-bolditalic-webfont.ttf') format('truetype'),
+         url('roboto/roboto-bolditalic-webfont.svg#RobotoBoldItalic') format('svg');
+    font-weight: normal;
+    font-style: italic;
+
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('roboto/roboto-italic-webfont.eot');
+    src: url('roboto/roboto-italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('roboto/roboto-italic-webfont.woff') format('woff'),
+         url('roboto/roboto-italic-webfont.ttf') format('truetype'),
+         url('roboto/roboto-italic-webfont.svg#RobotoItalic') format('svg');
+    font-weight: bold;
+    font-style: italic;
+
+}
+
+/*Import Ropa Sans Font, do we need other font file types??*/
+@font-face {
+    font-family: 'RopaSans';
+    src: url('ropasans/RopaSans-Regular.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'RopaSans';
+    src: url('ropasans/RopaSans-Italic.ttf') format('truetype');
+    font-style: italic;
+}
+
+/* Main Styles */
+body { color:#000000; font-family:'Roboto'; font-size:14px; height:768px; min-width: 1280px; min-height: 860px; overflow: hidden;}
+a { color:#ffffff; text-decoration:none; font-weight: bold }
+a:hover { color:#008EAF; }
+h1 { font-family:'RopaSans'; font-weight:normal; }
+h2 { font-family:'RopaSans'; font-weight:normal; }
+li { list-style-type:none; }
+
+#wrapper {
+    display:block;
+    float:left;
+ /*   min-width:1280px;*/
+}
+
+#visualization{
+    position: fixed;
+}
+
+#dataviz {
+	background-color: 	#111;
+	margin: 			0px;
+	overflow-y: 		hidden;
+	overflow-x:         auto;
+}
+#overlay_2d{
+	-webkit-perspective:		800;
+	position:					absolute;
+	margin: 					0px;
+	width:						100%;
+	height:						100%;
+	pointer-events:				none;
+}
+
+.country {
+	margin-right:			10px;
+}
+
+
+.detail {
+	color:					#aaaaaa;
+}
+
+#loading{
+    background-color: #111;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -38px;
+    margin-left: -380px;
+    color: white;
+    padding: 16px 30px;
+    width: 700px;
+    height: 45px;
+    line-height: 11px;
+}
+
+
+/*Styles by Pitch*/
+.clear {
+    clear:both;
+}
+
+/*Remove all text selection (except for Text Input)*/
+* {
+	-webkit-touch-callout: none;
+	-webkit-user-select:   none;
+	-khtml-user-select:    none;
+	-moz-user-select:      none;
+	-ms-user-select:       none;
+	user-select:           none;
+}
+input[type='text'] {
+	-webkit-touch-callout: default;
+	-webkit-user-select:   auto;
+	-khtml-user-select:    auto;
+	-moz-user-select:      text;
+	-ms-user-select:       text;
+	user-select:           text;
+
+}
+/*
+Elements to control the title and country selector
+*/
+.overlayCountries {
+    z-index: 10001; /* selected country has z-index:10000*/
+}
+.pointer {
+    pointer-events: auto;
+}
+.noPointer {
+    pointer-events: none;
+}
+
+#glContainer {
+    z-index:1;
+    pointer-events:none;
+}
+#glContainer canvas {
+    z-index:1;
+    pointer-events:none;
+}
+
+#hudHeader {
+    position: 				absolute;
+/*    width: 					95%; */
+    left: 					30px;
+    top: 					20px;
+    color: 					#fff;
+    font-family: 			'RopaSans';
+    background: rgba(0,0,0,0.4);
+}
+#hudHeader h1 {
+    font-size: 				32px;
+    font-family: 			'RopaSans';
+    margin: 				0 0 0px 0;
+    display:                block;
+    float:                  left;
+}
+#hudHeader h1 .subtitle {
+    font-size: 14px;
+    color: #ddd;
+}
+
+#legend {
+  position: absolute;
+  left: 30px;
+  bottom: 20px;
+  color: #fff;
+  font-family: 'RopaSans';
+  background: rgba(0,0,0,0.4);
+  padding: 10px;
+}
+
+footer {
+  position: absolute;
+  right: 30px;
+  bottom: 20px;
+  color: #fff;
+  font-family: 'RopaSans';
+  padding: 10px;
+}
+
+#progress {
+  position: absolute;
+  right: 30px;
+  top: 20px;
+}
