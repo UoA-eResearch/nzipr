@@ -104,14 +104,14 @@ module.exports = function gruntInit( grunt ) {
     'eslint',
     'bower_concat:all',
     'concat:dist',
-    'browserify:production',
+    'browserify:dev',
     'uglify:all',
   ]);
 
   grunt.registerTask( 'incremental', [
     'clean:incr',
     'eslint',
-    'browserify:production',
+    'browserify:dev',
     'uglify:incr',
   ]);
 };
