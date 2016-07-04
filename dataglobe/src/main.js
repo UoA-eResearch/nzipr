@@ -74,6 +74,11 @@ function startDataPump() {
 
   window.setInterval( () => {
     const dataToViz = getDataForTick( lastTime, lastTime + tickLength );
+
+    let yearToPrint = new Date(lastTime);
+    yearToPrint = yearToPrint.getFullYear();
+    document.getElementById( 'time_display' ).innerHTML = yearToPrint;
+
     lastTime += tickLength;
     currPollingInterval++;
 
@@ -81,8 +86,6 @@ function startDataPump() {
       lastTime = _minDataTimestamp.getTime();
       currPollingInterval = 0;
     }
-
-    document.getElementById( 'time_display' ).innerHTML = _minDataTimestamp.getFullYear();
 
     visualize.initVisualization( dataToViz );
     progressViz.handleProgressUpdate( currPollingInterval / numPollingIntervals );
@@ -225,7 +228,7 @@ if (!Detector.webgl) {
             colour: 'g',
             sector: point.aiddata_sector_name,
             amount: point.$,
-            time: new Date(point.year),
+            time: new Date('' + point.year),
           };
         });
 
