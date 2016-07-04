@@ -3,13 +3,13 @@ import * as vizLines from './visualize_lines';
 // Ugly variable declarations
 const rotateXMax = 90 * Math.PI / 180;
 
-let rotateVX = 0.35 * Math.PI / 180;
+let rotateVX = 0; // 0.35 * Math.PI / 180;
 let mouseX = 0;
 let mouseY = 0;
 let pmouseX = 0;
 let pmouseY = 0;
 let dragging = false;
-let rotateVY = 0;
+let rotateVY = 4 * Math.PI / 180;
 let rotateTargetX = 0;
 let rotateTargetY = 0;
 
