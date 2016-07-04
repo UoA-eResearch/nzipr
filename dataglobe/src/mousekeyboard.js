@@ -86,8 +86,8 @@ export function onDocumentMouseDown( event ) {
   }
 
   dragging = true;
-  mouseX = event.x;
-  mouseY = event.y;
+  // mouseX = event.x;
+  // mouseY = event.y;
   rotateTargetX = undefined;
   rotateTargetX = undefined;
   stopAutoRotate();
