@@ -4,7 +4,7 @@ require('settings.inc.php');
 
 $pacific_iso2_codes = '("AS","AU","CK","FJ","PF","GU","KI","MH","FM","NR","NC","NZ","NU","NF","MP","PW","PG","PN","SB","TK","TO","TV","VU","WF","WS")';
 
-$sql = "SELECT donor_iso, recipient_iso, year, aiddata_sector_name, commitment_amount_usd_constant AS $ FROM `aid` WHERE recipient_iso IN $pacific_iso2_codes AND donor_iso!='' AND year != 9999 ORDER BY year ASC";
+$sql = "SELECT donor_iso, recipient_iso, year, aiddata_sector_name, SUM(commitment_amount_usd_constant) AS $ FROM `aid` WHERE recipient_iso IN $pacific_iso2_codes AND donor_iso!='' AND year != 9999 AND commitment_amount_usd_constant > 0 GROUP BY donor_iso, recipient_iso, year, aiddata_sector_name ORDER BY year ASC";
 
 $result = $db->query($sql);
 
