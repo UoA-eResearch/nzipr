@@ -68,22 +68,22 @@ export default class LegendItem extends React.Component {
 
     switch (this.props.type) {
     case 'r':
-      itemText = 'Red';
+      itemText = 'Government and civil society, general';
       break;
     case 'o':
-      itemText = 'Orange';
+      itemText = 'Post-secondary education';
       break;
     case 'g':
-      itemText = 'Green';
+      itemText = 'Transport and storage';
       break;
     case 'b':
-      itemText = 'Blue';
+      itemText = 'Agriculture';
       break;
     case 'p':
-      itemText = 'Purple';
+      itemText = 'Other';
       break;
     default:
-      itemText = 'Red';
+      itemText = 'Unknown';
     }
 
     if (!this.state.active) {

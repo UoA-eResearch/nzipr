@@ -221,11 +221,16 @@ if (!Detector.webgl) {
       _latLonData = latLonData;
       dataLoading.loadContentData( '../get_data.php', ( data ) => {
         // need to convert all the timestamps to JS dates
+        const sectorColors = { 'Government and civil society, general': 'r', 'Post-secondary education': 'o', 'Agriculture': 'b', 'Transport and storage': 'g' };
         const mappedData = us.map( data, function mapData( point ) {
+          let color = 'p';
+          if (sectorColors[point.aiddata_sector_name]) {
+            color = sectorColors[point.aiddata_sector_name];
+          }
           return {
             src: _countryLookup[point.donor_iso],
             dest: _countryLookup[point.recipient_iso],
-            colour: 'g',
+            colour: color,
             sector: point.aiddata_sector_name,
             amount: point.$,
             time: new Date('' + point.year),
