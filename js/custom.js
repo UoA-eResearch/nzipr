@@ -127,7 +127,8 @@ $(function() {
     if (!window.data) return;
     console.log('rendering');
     var dest = {}
-    for (var e of window.data) {
+    for (var i in window.data) {
+      var e = window.data[i];
       if (e.year >= window.min && e.year <= window.max) {
         if (dest[e.recipient_iso]) {
           dest[e.recipient_iso] += e.$;
@@ -195,7 +196,8 @@ $(function() {
   
   function displayLines(target) {
     var donors = {};
-    for (var e of window.data) {
+    for (var i in window.data) {
+      var e = window.data[i];
       if (target.recipient_iso == e.recipient_iso && e.year >= window.min && e.year <= window.max) {
         if (donors[e.donor_iso]) {
           donors[e.donor_iso] += e.$;
@@ -232,7 +234,8 @@ $(function() {
   function refreshLines() {
     if (!window.selected_country) return;
     var donors = {};
-    for (var e of window.data) {
+    for (var i in window.data) {
+      var e = window.data[i];
       if (window.selected_country == e.recipient_iso && e.year >= window.min && e.year <= window.max) {
         if (donors[e.donor_iso]) {
           donors[e.donor_iso] += e.$;
@@ -272,7 +275,8 @@ $(function() {
   
   function getDonorsForRecipient(recipient, aid_type) {
     var donors = {}
-    for (var e of window.data) {
+    for (var i in window.data) {
+      var e = window.data[i];
       if (recipient == e.recipient_iso && e.year >= window.min && e.year <= window.max) {
         if (!aid_type || !aid_type.length || aid_type.indexOf(e.aiddata_sector_name) != -1) {
           if (donors[e.donor_iso]) {
@@ -292,7 +296,8 @@ $(function() {
   
   function getAidTypesForRecipient(recipient, donor) {
     var types = {}
-    for (var e of window.data) {
+    for (var i in window.data) {
+      var e = window.data[i];
       if (recipient == e.recipient_iso && e.year >= window.min && e.year <= window.max) {
         if (!donor || !donor.length || donor.indexOf(window.cc_names[e.donor_iso]) != -1) {
           if (types[e.aiddata_sector_name]) {
@@ -365,12 +370,12 @@ $(function() {
     var selected_aid_types = aid_type_table.rows('.selected').data().toArray();
     
     var selected_donors_names = [];
-    for (var i of selected_donors) {
-      selected_donors_names.push(i[0]);
+    for (var i in selected_donors) {
+      selected_donors_names.push(selected_donors[i][0]);
     }
     var selected_aid_types_names = [];
-    for (var i of selected_aid_types) {
-      selected_aid_types_names.push(i[0]);
+    for (var i in selected_aid_types) {
+      selected_aid_types_names.push(selected_aid_types[i][0]);
     }
     
     console.log(selected_donors_names, selected_aid_types_names);
@@ -382,7 +387,8 @@ $(function() {
     // Update existing rows
     donor_table.rows().every(function(rowIdx, tableLoop, rowLoop) {
       var d = this.data();
-      for (var pair of donors) {
+      for (var i in donors) {
+        var pair = donors[i];
         if (pair[0] == d[0]) {
           d[1] = pair[1];
           seen_countries.push(d[0]);
@@ -395,7 +401,8 @@ $(function() {
     // Remove no longer existing rows
     donor_table.rows('.marked-for-deletion').remove();
     // Add non-existing rows
-    for (var pair of donors) {
+    for (var i in donors) {
+      var pair = donors[i];
       if (seen_countries.indexOf(pair[0]) == -1) {
         donor_table.row.add(pair);
       }
@@ -407,7 +414,8 @@ $(function() {
     // Update existing rows
     aid_type_table.rows().every(function(rowIdx, tableLoop, rowLoop) {
       var d = this.data();
-      for (var pair of aid_types) {
+      for (var i in aid_types) {
+        var pair = aid_types[i];
         if (pair[0] == d[0]) {
           d[1] = pair[1];
           seen_aid_types.push(d[0]);
@@ -420,7 +428,8 @@ $(function() {
     // Remove no longer existing rows
     aid_type_table.rows('.marked-for-deletion').remove();
     // Add non-existing rows
-    for (var pair of aid_types) {
+    for (var i in aid_types) {
+      var pair = aid_types[i];
       if (seen_aid_types.indexOf(pair[0]) == -1) {
         aid_type_table.row.add(pair);
       }
