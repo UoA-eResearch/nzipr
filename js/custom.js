@@ -22,6 +22,8 @@ $(function() {
   
   // Timeline
   
+  $("#timelinecontainer").resizable()
+  
   window.min = 1973;
   window.max = 1974;
   window.range = {'min': 1973, 'max': 2012}
@@ -85,7 +87,6 @@ $(function() {
       "featureType": "landscape.natural",
       "elementType": "geometry.fill",
       "stylers": [
-        { "lightness": 100 },
         { "visibility": "on" }
       ]
     },{
@@ -370,7 +371,8 @@ $(function() {
     window.infowindow = new google.maps.InfoWindow({
       content: contentString,
       position: target.center,
-      target: target
+      target: target,
+      zIndex: 1000
     });
     window.infowindow.addListener('domready', function() {
       $('#donors').DataTable({
