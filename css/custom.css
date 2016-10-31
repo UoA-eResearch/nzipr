@@ -26,6 +26,18 @@ html, body, #timemap, #map {
   background: #CCCCCC;
 }
 
+#chartContainer {
+  position:absolute;
+  width: 20%;
+  right: 0;
+  top: 192px;
+  z-index: 10;
+}
+
+#chart {
+  height: 100%;
+}
+
 .dataTable tbody tr {
   cursor: pointer;
 }

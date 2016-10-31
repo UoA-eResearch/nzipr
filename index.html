@@ -14,6 +14,9 @@
     <link href="css/custom.css" type="text/css" rel="stylesheet"/>
     <link href="css/nouislider.css" type="text/css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   </head>
 
   <body>
@@ -25,6 +28,9 @@
           <p style='float:right'>Currently showing <span id='showing'>all incoming aid</span>, between the years <span id='year'></span>. <span class="help">Click one of the circles to see more details about aid recieved by that country. </span><a href='README.pdf'>About this dataset</a></p>
         </div>
         <div id="map"></div>
+        <div id="chartContainer">
+          <div id="chart"></div>
+        </div>
     </div>
   </body>
 </html>

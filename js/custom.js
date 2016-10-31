@@ -125,12 +125,48 @@ $(function() {
       $.getJSON("get_data.php", function(data) {
         window.data = data;
         renderData();
+        renderChart();
       });
     });
   });
   
   window.countryCircles = {}
   window.countryLabels = {}
+  
+  window.drawnTraces = [];
+  
+  function renderChart(recipient) {
+    if (drawnTraces.indexOf(recipient) > -1) return;
+    drawnTraces.push(recipient);
+    var by_year = {}
+    var chart = $("#chart")[0];
+    $("#chartContainer").resizable({
+      handles: "n, e, s, w",
+      stop: function(event, ui) {
+        console.log("resized");
+        Plotly.Plots.resize(chart);
+      }
+    });
+    for (var i in window.data) {
+      var e = window.data[i];
+      if (recipient && e.recipient_iso != recipient) {
+        continue;
+      }
+      if (!by_year[e.year]) by_year[e.year] = 0;
+      by_year[e.year] += e.$;
+    }
+    Plotly.plot(
+      chart,
+      [{
+        name: recipient || "all",
+        x: Object.keys(by_year),
+        y: Object.values(by_year),
+      }],
+      {
+        margin: { t: 0 }
+      }
+    );
+  }
   
   function renderData() {
     if (!window.data) return;
@@ -184,6 +220,7 @@ $(function() {
           window.selected_country = this.recipient_iso;
           displayInfoWindow(this);
           displayLines(this);
+          renderChart(this.recipient_iso);
         });
         window.countryCircles[i].addListener('mouseover', function() {
           this.setOptions({fillColor: '#FF199B', strokeColor: '#FF199B'});
