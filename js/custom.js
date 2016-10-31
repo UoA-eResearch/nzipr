@@ -106,6 +106,15 @@ $(function() {
     disableDefaultUI: true,
     zoomControl: true
   });
+
+  map.data.loadGeoJson('eez.json');
+  map.data.setStyle(function(feature) {
+    var name = feature.getProperty("Name");
+    if (name == "Countries") {
+      return {fillColor: "green", fillOpacity: .5, strokeColor: "green", strokeWeight: 1, strokeOpacity: .5}
+    }
+    return {visible: false}
+  });
     
   // Load knowledge
   
