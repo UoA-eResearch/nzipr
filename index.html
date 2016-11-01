@@ -21,7 +21,7 @@
 
   <body>
     <div id="timemap">
-        <div id="timelinecontainer">
+        <div id="timelinecontainer" class="resizable">
           <h3 id='title'>NZIPR Pacific Aid Map</h3>
           <div id="timeline"></div>
           <button class='play' style='float:left; margin-left: 10px;margin-top: 10px;'><i class="material-icons">play_arrow</i></button>
@@ -30,6 +30,10 @@
         <div id="map"></div>
         <div id="chartContainer">
           <div id="chart"></div>
+        </div>
+        <div id="filterContainer" class="resizable">
+          <div style="overflow:hidden">Sector:</div>
+          <select id="sector" style="width: 100%;height: calc(100% - 20px)" multiple></select>
         </div>
     </div>
   </body>

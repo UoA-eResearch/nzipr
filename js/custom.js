@@ -22,7 +22,7 @@ $(function() {
   
   // Timeline
   
-  $("#timelinecontainer").resizable()
+  $(".resizable").resizable()
   
   window.min = 1973;
   window.max = 1974;
@@ -127,6 +127,7 @@ $(function() {
         window.data = data;
         renderData();
         renderChart();
+        renderFilters();
       });
     });
   });
@@ -142,7 +143,7 @@ $(function() {
     var by_year = {}
     var chart = $("#chart")[0];
     $("#chartContainer").resizable({
-      handles: "n, e, s, w",
+      handles: "n, s, w",
       stop: function(event, ui) {
         console.log("resized");
         Plotly.Plots.resize(chart);
@@ -169,18 +170,41 @@ $(function() {
     );
   }
   
+  function renderFilters() {
+    var sectors = {}
+    for (var i in window.data) {
+      var e = window.data[i];
+      if (e.aiddata_sector_name == " " || e.aiddata_sector_name == "Unallocated/  unspecified") {
+        e.aiddata_sector_name = "Unallocated/ unspecified";
+      }
+      if (!sectors[e.aiddata_sector_name]) sectors[e.aiddata_sector_name] = 0;
+      sectors[e.aiddata_sector_name] += e.$;
+    }
+    var keys = Object.keys(sectors).sort()
+    for (var i in keys) {
+      var s = keys[i];
+      var sum = sectors[s];
+      $("#sector").append("<option selected>" + s + "</option>");
+    }
+    console.log(sectors);
+  }
+  
+  $("#sector").change(function(e) {
+    window.sector_filter = $(this).val();
+    renderData();
+  });
+  
   function renderData() {
     if (!window.data) return;
     console.log('rendering');
     var dest = {}
     for (var i in window.data) {
       var e = window.data[i];
-      if (e.year >= window.min && e.year <= window.max) {
-        if (dest[e.recipient_iso]) {
-          dest[e.recipient_iso] += e.$;
-        } else {
-          dest[e.recipient_iso] = e.$;
-        }
+      var yearInRange = e.year >= window.min && e.year <= window.max;
+      var inSectorFilter = !window.sector_filter || window.sector_filter.indexOf(e.aiddata_sector_name) > -1;
+      if (yearInRange && inSectorFilter) {
+        if (!dest[e.recipient_iso]) dest[e.recipient_iso] = 0;
+        dest[e.recipient_iso] += e.$;
       }
     }
     for (var i in dest) {

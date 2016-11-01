@@ -35,7 +35,19 @@ html, body, #timemap, #map {
 #chartContainer {
   position:absolute;
   width: 20%;
+  height: 450px;
   right: 0;
+  top: 192px;
+  z-index: 10;
+}
+
+#filterContainer {
+  position:absolute;
+  background:rgba(255,255,255,.7);
+  width: 20%;
+  height: 450px;
+  padding: 5px;
+  left:0;
   top: 192px;
   z-index: 10;
 }

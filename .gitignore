@@ -1,3 +1,2 @@
 settings.inc.php
-private/*.sql
-private/*.json
+private
