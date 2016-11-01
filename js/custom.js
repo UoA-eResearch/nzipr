@@ -56,7 +56,6 @@ $(function() {
     var values = this.get();
     window.min = values[0];
     window.max = values[1];
-    $("#year").text(window.min + " - " + window.max);
     renderData();
   });
     
