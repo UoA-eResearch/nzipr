@@ -216,6 +216,7 @@ $(function() {
       
       if (window.countryCircles[i]) {
         window.countryCircles[i].setRadius(radius);
+        window.countryCircles[i].setVisible(true);
         window.countryLabels[i].set('text', countryName + ': ' + window.$format(aid_sum));
       } else {
         window.countryCircles[i] = new google.maps.Circle({
@@ -257,7 +258,7 @@ $(function() {
     }
     for (var i in countryCircles) {
       if (!dest[i]) {
-        countryCircles[i].setRadius(0);
+        countryCircles[i].setVisible(false);
         countryLabels[i].set('text', '');
       }
     }
