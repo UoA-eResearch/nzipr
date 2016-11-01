@@ -172,6 +172,7 @@ $(function() {
   
   function renderFilters() {
     var sectors = {}
+    var donor_countries = {}
     for (var i in window.data) {
       var e = window.data[i];
       if (e.aiddata_sector_name == " " || e.aiddata_sector_name == "Unallocated/  unspecified") {
@@ -179,18 +180,36 @@ $(function() {
       }
       if (!sectors[e.aiddata_sector_name]) sectors[e.aiddata_sector_name] = 0;
       sectors[e.aiddata_sector_name] += e.$;
+      
+      var donor = cc_names[e.donor_iso];
+      if (!donor_countries[donor]) donor_countries[donor] = 0;
+      donor_countries[donor] += e.$;
     }
+    
+    console.log(sectors);
+    console.log(donor_countries);
+    
     var keys = Object.keys(sectors).sort()
     for (var i in keys) {
       var s = keys[i];
       var sum = sectors[s];
       $("#sector").append("<option selected>" + s + "</option>");
     }
-    console.log(sectors);
+    var keys = Object.keys(donor_countries).sort()
+    for (var i in keys) {
+      var c = keys[i];
+      var sum = donor_countries[c];
+      $("#countries").append("<option selected>" + c + "</option>");
+    }
   }
   
   $("#sector").change(function(e) {
     window.sector_filter = $(this).val();
+    renderData();
+  });
+  
+  $("#countries").change(function(e) {
+    window.donor_country_filter = $(this).val();
     renderData();
   });
   
@@ -202,7 +221,8 @@ $(function() {
       var e = window.data[i];
       var yearInRange = e.year >= window.min && e.year <= window.max;
       var inSectorFilter = !window.sector_filter || window.sector_filter.indexOf(e.aiddata_sector_name) > -1;
-      if (yearInRange && inSectorFilter) {
+      var inDonorCountryFilter = !window.donor_country_filter || window.donor_country_filter.indexOf(window.cc_names[e.donor_iso]) > -1;
+      if (yearInRange && inSectorFilter && inDonorCountryFilter) {
         if (!dest[e.recipient_iso]) dest[e.recipient_iso] = 0;
         dest[e.recipient_iso] += e.$;
       }
