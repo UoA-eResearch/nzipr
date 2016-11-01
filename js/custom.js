@@ -121,6 +121,17 @@ $(function() {
   
   $.getJSON("cc_latlng.json", function(cc_map) {
     window.cc_map = cc_map;
+    var color_map = {}
+    var getColorAtScalar = function (n, maxLength) {
+      var n = n * 360 / maxLength;
+      return 'hsl(' + n + ',100%,50%)';
+    }
+    var countries = Object.keys(cc_map);
+    for (var i in countries) {
+      var c = countries[i];
+      color_map[c] = getColorAtScalar(i, countries.length);
+    }
+    window.color_map = color_map;
     $.getJSON("cc_names.json", function(cc_names) {
       window.cc_names = cc_names;
       $.getJSON("get_data.php", function(data) {
@@ -161,6 +172,9 @@ $(function() {
       chart,
       [{
         name: recipient || "all",
+        line: {
+          color: color_map[recipient],
+        },
         x: Object.keys(by_year),
         y: Object.values(by_year),
       }],
@@ -240,10 +254,10 @@ $(function() {
         window.countryLabels[i].set('text', countryName + ': ' + window.$format(aid_sum));
       } else {
         window.countryCircles[i] = new google.maps.Circle({
-          strokeColor: '#FF0000',
+          strokeColor: color_map[i],
           strokeOpacity: 0.8,
           strokeWeight: 2,
-          fillColor: '#FF0000',
+          fillColor: color_map[i],
           fillOpacity: 0.35,
           map: window.map,
           center: center,
@@ -267,12 +281,6 @@ $(function() {
           displayInfoWindow(this);
           displayLines(this);
           renderChart(this.recipient_iso);
-        });
-        window.countryCircles[i].addListener('mouseover', function() {
-          this.setOptions({fillColor: '#FF199B', strokeColor: '#FF199B'});
-        });
-        window.countryCircles[i].addListener('mouseout', function() {
-          this.setOptions({fillColor: '#FF0000', strokeColor: '#FF0000'});
         });
       }
     }
@@ -316,7 +324,7 @@ $(function() {
         map: map,
         path: [latlng_recipient, latlng_donor],
         geodesic: false,
-        strokeColor: '#FF0000',
+        strokeColor: color_map[i],
         strokeOpacity: 1.0,
         strokeWeight: weight
       });
@@ -351,7 +359,7 @@ $(function() {
           map: map,
           path: [latlng_recipient, latlng_donor],
           geodesic: false,
-          strokeColor: '#FF0000',
+          strokeColor: color_map[i],
           strokeOpacity: 1.0,
           strokeWeight: weight
         });
