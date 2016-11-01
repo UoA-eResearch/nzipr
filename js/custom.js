@@ -133,11 +133,14 @@ $(function() {
     window.color_map = color_map;
     $.getJSON("cc_names.json", function(cc_names) {
       window.cc_names = cc_names;
-      $.getJSON("get_data.php", function(data) {
-        window.data = data;
-        renderData();
-        renderChart();
-        renderFilters();
+      $.getJSON("cc_pop.json", function(cc_pop) {
+        window.cc_pop = cc_pop;
+        $.getJSON("get_data.php", function(data) {
+          window.data = data;
+          renderData();
+          renderChart();
+          renderFilters();
+        });
       });
     });
   });
@@ -247,12 +250,13 @@ $(function() {
       var center = new google.maps.LatLng(latlng[0], latlng[1]);
       var countryName = window.cc_names[i];
       
-      if (window.countryCircles[i]) {
-        window.countryCircles[i].setRadius(radius);
-        window.countryCircles[i].setVisible(true);
+      if (!window.countryCircles[i]) window.countryCircles[i] = {}
+      if (window.countryCircles[i]['aid']) {
+        window.countryCircles[i]['aid'].setRadius(radius);
+        window.countryCircles[i]['aid'].setVisible(true);
         window.countryLabels[i].set('text', countryName + ': ' + window.$format(aid_sum));
       } else {
-        window.countryCircles[i] = new google.maps.Circle({
+        window.countryCircles[i]['aid'] = new google.maps.Circle({
           strokeColor: color_map[i],
           strokeOpacity: 0.8,
           strokeWeight: 2,
@@ -275,7 +279,7 @@ $(function() {
           minZoom: 4,
           recipient_iso: i
         });
-        window.countryCircles[i].addListener('click', function() {
+        window.countryCircles[i]['aid'].addListener('click', function() {
           window.selected_country = this.recipient_iso;
           displayInfoWindow(this);
           displayLines(this);
@@ -284,13 +288,47 @@ $(function() {
       }
     }
     for (var i in countryCircles) {
-      if (!dest[i]) {
-        countryCircles[i].setVisible(false);
+      if (!dest[i] && countryCircles[i]['aid']) {
+        countryCircles[i]['aid'].setVisible(false);
         countryLabels[i].set('text', '');
       }
     }
     refreshInfoWindow();
     refreshLines();
+    renderPopCircles();
+  }
+  
+  function renderPopCircles() {
+    for (var i in window.cc_pop) {
+      if (!window.cc_map[i] || !window.countryCircles[i]) continue;
+      var count = 0;
+      var sum = 0;
+      for (var year in window.cc_pop[i]) {
+        if (year >= window.min && year <= window.max) {
+          sum += window.cc_pop[i][year];
+          count++;
+        }
+      }
+      var avg = sum / count;
+      var radius = avg / 10;
+      var latlng = window.cc_map[i];
+      var center = new google.maps.LatLng(latlng[0], latlng[1]);
+      if (window.countryCircles[i]['pop']) {
+        window.countryCircles[i]['pop'].setRadius(radius);
+      } else {
+        window.countryCircles[i]['pop'] = new google.maps.Circle({
+          strokeColor: 'black',
+          strokeOpacity: 0.5,
+          strokeWeight: 2,
+          fillColor: 'red',
+          fillOpacity: 0,
+          map: window.map,
+          center: center,
+          radius: radius,
+          clickable: false
+        });
+      }
+    }
   }
   
   function displayLines(target) {
