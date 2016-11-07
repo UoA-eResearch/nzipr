@@ -80,7 +80,7 @@ $(function() {
   var mapStyle = [
     {
       "stylers": [
-        { "visibility": "off" }
+        { "visibility": "on" }
       ]
     },{
       "featureType": "landscape.natural",
@@ -102,6 +102,8 @@ $(function() {
   window.map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: -7.7, lng: -180},
     zoom: 4,
+    minZoom: 3,
+    maxZoom: 7,
     styles: mapStyle,
     disableDefaultUI: true,
     zoomControl: true
@@ -111,7 +113,7 @@ $(function() {
   map.data.setStyle(function(feature) {
     var name = feature.getProperty("Name");
     if (name == "Countries") {
-      return {fillColor: "green", fillOpacity: .5, strokeColor: "green", strokeWeight: 1, strokeOpacity: .5}
+      return {fillColor: "red", fillOpacity: .75, strokeColor: "green", strokeWeight: 1, strokeOpacity: .5}
     }
     return {visible: false}
   });
@@ -575,4 +577,5 @@ $(function() {
     // Re-render the table
     aid_type_table.draw(false);
   }
+
 });
