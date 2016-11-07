@@ -19,24 +19,108 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   </head>
 
-  <body>
-    <div id="timemap">
-        <div id="timelinecontainer" class="resizable">
+<style>
+body {
+    font-family: "Lato", sans-serif;
+}
+
+.sidenav {
+    height: 0;
+    width: 100%;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #DDD;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 0px;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s
+}
+
+.sidenav a:hover, .offcanvas a:focus{
+    color: #f1f1f1;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+</style>
+
+<body>
+<div id="mySidenav" class="sidenav">
+<!--  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">xx&#9776</a>
+-->
+<span style="float: right; font-size:30px; cursor:pointer" onclick="closeNav()">&#9776</span>
+  <a href="#">About</a>
+        <div id="timelinecontainer">
           <h3 id='title'>NZIPR Pacific Aid Map</h3>
           <div id="timeline"></div>
           <button class='play' style='float:left; margin-left: 10px;margin-top: 10px;'><i class="material-icons">play_arrow</i></button>
           <p style='float:right'><span class="help">Gray circles indicate population size. Coloured circles indicate aid recieved. Click one of the coloured circles to see more details about aid recieved by that country. </span><a href='README.pdf'>About this dataset</a></p>
         </div>
+        <div>
+<div style="float: left;">
+          <div style="overflow:hidden">Sectors:</div>
+          <select id="sector" style="width: 100%;height: calc(50% - 20px)" multiple></select>
+</div>
+<div style="float: right;">
+          <div style="overflow:hidden">Donors:</div>
+          <select id="countries" style="width: 100%;height: calc(50% - 20px)" multiple></select>
+</div>
+        </div>
+</div>
+
+    <div id="timemap">
+<div>
+<span style="float: right; font-size:30px; cursor:pointer" onclick="openNav()">&#9776</span>
+</div>
         <div id="map"></div>
+<div style='position: fixed; bottom: 0; width: 100%; background-color: red; display: inline-block; '>
         <div id="chartContainer">
           <div id="chart"></div>
         </div>
-        <div id="filterContainer" class="resizable">
-          <div style="overflow:hidden">Sectors:</div>
-          <select id="sector" style="width: 100%;height: calc(50% - 20px)" multiple></select>
-          <div style="overflow:hidden">Donors:</div>
-          <select id="countries" style="width: 100%;height: calc(50% - 20px)" multiple></select>
-        </div>
+</div>
+This is cool
+    <div id="chart_div" style='display: inline-block;'></div>
+    <div id="table_div" style="width: 200px; display: inline-block;"></div>
+    <div id="geochart-colors" style="width: 700px; display: inline-block;"></div>
+
+
     </div>
+
+
+<script>
+function openNav() {
+    document.getElementById("mySidenav").style.height = "500px";
+}
+
+function closeNav() {
+    document.getElementById("mySidenav").style.height = "0px";
+    document.getElementById("mySidenav").display = "none";
+}
+</script>
+
+
   </body>
 </html>
+
+
+
