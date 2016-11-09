@@ -135,7 +135,7 @@ $(function() {
       window.cc_names = cc_names;
       $.getJSON("cc_pop.json", function(cc_pop) {
         window.cc_pop = cc_pop;
-        $.getJSON("get_data.php", function(data) {
+        $.getJSON("data.json", function(data) {
           window.data = data;
           renderData();
           renderChart();
