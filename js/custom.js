@@ -183,7 +183,10 @@ $(function() {
         y: Object.values(by_year),
       }],
       {
-        margin: { t: 0 }
+        title: "Figures",
+        xaxis: {title: "Year", showgrid: true},
+        yaxis: {title: "Aid", showgrid: true},
+        margin: { t: 50 }
       }
     );
   }
