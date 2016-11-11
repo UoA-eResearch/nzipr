@@ -102,6 +102,8 @@ $(function() {
   window.map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: -7.7, lng: -180},
     zoom: 4,
+    minZoom: 3,
+    maxZoom: 7,
     styles: mapStyle,
     disableDefaultUI: true,
     zoomControl: true
