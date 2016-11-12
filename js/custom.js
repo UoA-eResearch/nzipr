@@ -102,22 +102,80 @@ $(function() {
   window.map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: -7.7, lng: -180},
     zoom: 4,
-    minZoom: 3,
+    minZoom: 2,
     maxZoom: 7,
     styles: mapStyle,
     disableDefaultUI: true,
     zoomControl: true
   });
+  
+  var grid = new Graticule(window.map, true);
 
   map.data.loadGeoJson('eez.json');
+  // map.data.loadGeoJson('eez.pacific.json.formatted');
+  map.data.loadGeoJson('eez_shapes.json');
   map.data.setStyle(function(feature) {
     var name = feature.getProperty("Name");
     if (name == "Countries") {
       return {fillColor: "green", fillOpacity: .5, strokeColor: "green", strokeWeight: 1, strokeOpacity: .5}
     }
-    return {visible: false}
+    return {fillColor: "green", strokeWeight: 1, visible: true}
   });
-    
+  
+  map.data.addListener('mouseover', function(event) {
+	  //document.getElementById('info-box').textContent =
+	});
+//Color each letter gray. Change the color when the isColorful property
+//is set to true.
+map.data.setStyle(function(feature) {
+ var color = 'gray';
+ if (feature.getProperty('isColorful')) {
+   color = feature.getProperty('color');
+ }
+ return /** @type {google.maps.Data.StyleOptions} */({
+   fillColor: color,
+   strokeColor: color,
+   strokeWeight: 2
+ });
+});
+
+//When the user clicks, set 'isColorful', changing the color of the letters.
+var feature;
+
+map.data.addListener('click', function(event) {
+if (feature) feature.setProperty('isColorful', false);
+ event.feature.setProperty('isColorful', true);
+ feature = event.feature;
+ alert('Country is ' + event.feature.getProperty('country'));
+ // alert(JSON.stringify(feature));
+ var infowindowoptions = {content: '<h3>'+event.feature.getProperty('country')+'</h3><p>asdf asdf asdf asdfasd fasd fasdfasdf asdf asd fasd fas dfas dfa sdf asdf asd fasd fas df asdf asdf asd fas dfa sdf asdf asd fas df asdf asdf as dfas df asdf asd fas dfas df as</p>', width: 800, maxWidth: 500, position: {lat: event.latLng.lat(), lng: event.latLng.lng()}};
+ var infowindow = new google.maps.InfoWindow(infowindowoptions);
+ 
+ infowindow.open(map);
+
+});
+
+//When the user hovers, tempt them to click by outlining the letters.
+//Call revertStyle() to remove all overrides. This will use the style rules
+//defined in the function passed to setStyle()
+map.data.addListener('mouseover', function(event) {
+ map.data.revertStyle();
+ map.data.overrideStyle(event.feature, {strokeWeight: 8});
+
+ var infowindowoptions = {content: '<h3>'+event.feature.getProperty('country')+'</h3>', maxWidth: 300, position: {lat: event.latLng.lat(), lng: event.latLng.lng()}};
+ var infowindow = new google.maps.InfoWindow(infowindowoptions);
+ 
+// infowindow.open(map);
+});
+
+map.data.addListener('mouseout', function(event) {
+ map.data.revertStyle();
+});
+
+map.addListener('click', function(event) {
+    if (feature) feature.setProperty('isColorful', false);
+});
+
   // Load knowledge
   
   $.getJSON("cc_latlng.json", function(cc_map) {
@@ -460,21 +518,25 @@ $(function() {
   function displayInfoWindow(target) {
     var donors = getDonorsForRecipient(target.recipient_iso);
     var aid_types = getAidTypesForRecipient(target.recipient_iso);
-    var contentString = '<div style="width: 100%"><div style="width: 50%; float: left"><table id="donors" width="100%"></table></div><div style="width: 50%; float: left"><table id="aid_types" width="100%"></table></div></div><span class="help">Click one of the rows to filter the opposite table by that country/sector.</span>';
+    var contentString = '<div class="iwstyle" id="contentString" style="width: 1000px;"><div style="width: 38%; float: left"><table id="donors" width="100%"></table></div><div style="width: 62%; float: left"><table id="aid_types" width="100%"></table></div></div><span class="help">Click one of the rows to filter the opposite table by that country/sector.</span>';
     
     if (window.infowindow) window.infowindow.close();
     window.infowindow = new google.maps.InfoWindow({
       content: contentString,
       position: target.center,
       target: target,
+      // height: 500,
+      width: 1200,
       zIndex: 1000
     });
     window.infowindow.addListener('domready', function() {
       $('#donors').DataTable({
         data: donors,
-        lengthChange: false,
-        pageLength: 5,
+        lengthChange: false, // do not show "Show n entries"
+        pageLength: 15,
+        // paging: false,
         order: [[1, 'desc']],
+        bAutoWidth: false,
         columns: [
             { title: "Donor country" },
             { title: "Amount donated" },
@@ -482,9 +544,11 @@ $(function() {
       });
       $('#aid_types').DataTable({
         data: aid_types,
-        lengthChange: false,
-        pageLength: 5,
+        lengthChange: false, // do not show "Show n entries"
+        pageLength: 15,
+        // paging: false,
         order: [[1, 'desc']],
+        bAutoWidth: false,
         columns: [
             { title: "Sector" },
             { title: "Amount donated" }
