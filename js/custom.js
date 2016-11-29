@@ -250,7 +250,9 @@ map.addListener('click', function(event) {
           color: color_map[recipient],
         },
         x: Object.keys(by_year),
-        y: Object.values(by_year),
+        y: Object.keys(by_year).map(function(key) {
+             return by_year[key];
+           }),
       }],
       {
         title: "Figures",
