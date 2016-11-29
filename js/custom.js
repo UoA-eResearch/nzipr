@@ -108,16 +108,86 @@ $(function() {
     disableDefaultUI: true,
     zoomControl: true
   });
+  
+  var grid = new Graticule(window.map, true);
 
-  map.data.loadGeoJson('eez.json');
+  map.data.loadGeoJson('eez_pacific_lr.geojson');
+  // map.data.loadGeoJson('eez.json');
   map.data.setStyle(function(feature) {
     var name = feature.getProperty("Name");
     if (name == "Countries") {
       return {fillColor: "green", fillOpacity: .5, strokeColor: "green", strokeWeight: 1, strokeOpacity: .5}
     }
-    return {visible: false}
+    return {fillColor: "green", strokeWeight: 1, visible: true}
   });
-    
+  
+  map.data.addListener('mouseover', function(event) {
+	  //document.getElementById('info-box').textContent =
+	});
+//Color each letter gray. Change the color when the isColorful property
+//is set to true.
+map.data.setStyle(function(feature) {
+ var color = 'gray';
+ if (feature.getProperty('isColorful')) {
+   color = feature.getProperty('color');
+ }
+ return /** @type {google.maps.Data.StyleOptions} */({
+   fillColor: color,
+   strokeColor: color,
+   strokeWeight: 2
+ });
+});
+
+var feature;
+var country;
+var territory;
+var iso2;
+
+map.data.addListener('click', function(event) {
+if (feature) feature.setProperty('isColorful', false);
+ event.feature.setProperty('isColorful', true);
+ feature = event.feature;
+ // TODO alert(event.feature.getProperty('ISO_Ter2') + ' ' + event.feature.getProperty('Territory1') + ' (' + event.feature.getProperty('Sovereign1') + ')');
+ // alert(JSON.stringify(feature));
+ var infowindowoptions = {content: '<h3>'+event.feature.getProperty('Territory1') + ' (' + event.feature.getProperty('Sovereign1') + ')' +'</h3><p>asdf asdf asdf asdfasd fasd fasdfasdf asdf asd fasd fas dfas dfa sdf asdf asd fasd fas df asdf asdf asd fas dfa sdf asdf asd fas df asdf asdf as dfas df asdf asd fas dfas df as</p>', width: 800, maxWidth: 500, position: {lat: event.latLng.lat(), lng: event.latLng.lng()}};
+ var infowindow = new google.maps.InfoWindow(infowindowoptions);
+ 
+ // infowindow.open(map);
+this.recipient_iso = event.feature.getProperty('ISO_Ter2')
+territory = event.feature.getProperty('Territory1')
+country = event.feature.getProperty('Sovereign1')
+iso2 = event.feature.getProperty('ISO_Ter2')
+this.territory = event.feature.getProperty('Territory1')
+this.country = event.feature.getProperty('Sovereign1')
+  window.selected_country = this.recipient_iso;
+  displayInfoWindow(this);
+  displayLines(this);
+  renderChart(this.recipient_iso);
+});
+
+/**
+ * When the user hovers outline eez region
+ * revertStyle() removes all overrides. This will use the style rules
+ * defined in the function passed to setStyle()
+ */
+map.data.addListener('mouseover', function(event) {
+ map.data.revertStyle();
+ map.data.overrideStyle(event.feature, {strokeWeight: 8});
+
+ var infowindowoptions = {maxHeight: 400, content: '<h3>'+event.feature.getProperty('Territory1')+' (' + event.feature.getProperty('Sovereign1') + ')'+'</h3>', maxWidth: 300, position: {lat: event.latLng.lat(), lng: event.latLng.lng()}};
+ var infowindow = new google.maps.InfoWindow(infowindowoptions);
+ 
+// infowindow.open(map);
+});
+
+map.data.addListener('mouseout', function(event) {
+ map.data.revertStyle();
+});
+
+map.addListener('click', function(event) {
+    if (feature) feature.setProperty('isColorful', false);
+});
+
   // Load knowledge
   
   $.getJSON("cc_latlng.json", function(cc_map) {
@@ -460,12 +530,16 @@ $(function() {
   function displayInfoWindow(target) {
     var donors = getDonorsForRecipient(target.recipient_iso);
     var aid_types = getAidTypesForRecipient(target.recipient_iso);
-    var contentString = '<div style="width: 100%"><div style="width: 50%; float: left"><table id="donors" width="100%"></table></div><div style="width: 50%; float: left"><table id="aid_types" width="100%"></table></div></div><span class="help">Click one of the rows to filter the opposite table by that country/sector.</span>';
+    var title = territory;
+    if (territory !== country) {
+      title = title + ' (' + country + ')';
+    }
+    var contentString = '<div style="width: 100%"><h3>' + title + ' [' + iso2 + ']' + '</h3> <div style="width: 50%; float: left"> <table id="donors" width="100%"></table></div><div style="width: 50%; float: left"><table id="aid_types" width="100%"></table></div></div><span class="help">Click one of the rows to filter the opposite table by that country/sector.</span>';
     
     if (window.infowindow) window.infowindow.close();
     window.infowindow = new google.maps.InfoWindow({
       content: contentString,
-      position: target.center,
+      position: map.center, // target.center
       target: target,
       zIndex: 1000
     });
