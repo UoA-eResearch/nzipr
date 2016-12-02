@@ -142,6 +142,7 @@ var feature;
 var country;
 var territory;
 var iso2;
+var infowindowoptions;
 
 map.data.addListener('click', function(event) {
 if (feature) feature.setProperty('isColorful', false);
@@ -160,7 +161,7 @@ iso2 = event.feature.getProperty('ISO_Ter2')
 this.territory = event.feature.getProperty('Territory1')
 this.country = event.feature.getProperty('Sovereign1')
   window.selected_country = this.recipient_iso;
-  displayInfoWindow(this);
+  displayInfoWindow(this, event);
   displayLines(this);
   renderChart(this.recipient_iso);
 });
@@ -359,7 +360,7 @@ map.addListener('click', function(event) {
         window.countryCircles[i]['aid'].addListener('click', function() {
           window.selected_country = this.recipient_iso;
           displayInfoWindow(this);
-          displayLines(this);
+          displayLines(this, null);
           renderChart(this.recipient_iso);
         });
       }
@@ -529,7 +530,7 @@ map.addListener('click', function(event) {
     return array;
   }
   
-  function displayInfoWindow(target) {
+  function displayInfoWindow(target, event) {
     var donors = getDonorsForRecipient(target.recipient_iso);
     var aid_types = getAidTypesForRecipient(target.recipient_iso);
     var title = territory;
@@ -537,11 +538,14 @@ map.addListener('click', function(event) {
       title = title + ' (' + country + ')';
     }
     var contentString = '<div style="width: 100%"><h3>' + title + ' [' + iso2 + ']' + '</h3> <div style="width: 50%; float: left"> <table id="donors" width="100%"></table></div><div style="width: 50%; float: left"><table id="aid_types" width="100%"></table></div></div><span class="help">Click one of the rows to filter the opposite table by that country/sector.</span>';
-    
+    var c = map.center;
+    if (event) {
+        c = event.latLng;
+    } 
     if (window.infowindow) window.infowindow.close();
     window.infowindow = new google.maps.InfoWindow({
       content: contentString,
-      position: map.center, // target.center
+      position: c, // target.center
       target: target,
       zIndex: 1000
     });
