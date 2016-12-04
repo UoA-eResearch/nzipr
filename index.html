@@ -21,6 +21,19 @@
   </head>
 
   <body>
+
+<div id="myTopnav" class="topnav" style="z-index: 100;">
+<!--
+  <span style="float: left; font-size:30px; cursor: pointer; background-color: green;" onclick="closeNav()">&#9776 blah de blah blah</span>
+-->
+  <div style="background-color: red; position: absolute; top: 0px; left: 0px; width: 100%; vertical-align: top; z-index: 10000;">
+    <span style="float: left; font-size:30px; cursor:pointer; background-color: transparent; vertical-align: top;" onclick="javascript: openNav();">&#9776</span>
+  </div>
+<!--
+  <span style="float: left; font-size:30px; cursor:pointer; background-color: transparent; vertical-align: top;" onclick="javascript: openNav();">&#9776</span>
+-->
+</div>
+
     <div id="timemap">
         <div id="timelinecontainer" class="resizable">
           <h3 id='title'>NZIPR Pacific Aid Map</h3>
@@ -29,8 +42,8 @@
           <p style='float:right'><span class="help">Gray circles indicate population size. Coloured circles indicate aid recieved. Click one of the coloured circles to see more details about aid recieved by that country. </span><a href='README.pdf'>About this dataset</a></p>
         </div>
         <div id="map"></div>
-        <div id="chartContainer">
-          <div id="chart"></div>
+        <div id="chartContainer" class="resizable">
+          <div id="chart" style="float: right; float: bottom; bottom: 10px; margin-right: 20px;  width: 600px; height: 400px;"></div>
         </div>
         <div id="filterContainer" class="resizable">
           <div style="overflow:hidden">Sectors:</div>
@@ -39,5 +52,8 @@
           <select id="countries" style="width: 100%;height: calc(50% - 20px)" multiple></select>
         </div>
     </div>
+   </div>
+
+
   </body>
 </html>

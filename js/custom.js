@@ -660,4 +660,41 @@ map.addListener('click', function(event) {
     // Re-render the table
     aid_type_table.draw(false);
   }
+
+function addListeners(){
+    document.getElementById('chartContainer').addEventListener('mousedown', mouseDown, false);
+    window.addEventListener('mouseup', mouseUp, false);
+
+}
+
+function mouseUp()
+{
+    window.removeEventListener('mousemove', divMove, true);
+}
+
+function mouseDown(e){
+  window.addEventListener('mousemove', divMove, true);
+}
+
+function divMove(e){
+    var div = document.getElementById('chartContainer');
+  div.style.position = 'absolute';
+  div.style.top = e.clientY + 'px';
+  div.style.left = e.clientX + 'px';
+}
+
+// window.onload
+addListeners();
 });
+
+function openNav() {
+    document.getElementById("myTopnav").style.height = "600px";
+    document.getElementById("myTopnav").style.width = "100%";
+    // document.getElementById("myTopnav").display = "block";
+}
+
+function closeNav() {
+    document.getElementById("myTopnav").style.height = "0px";
+    document.getElementById("myTopnav").style.width = "50px";
+    document.getElementById("myTopnav").display = "none";
+}
