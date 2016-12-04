@@ -111,9 +111,12 @@ $(function() {
   
   var grid = new Graticule(window.map, true);
 
-  map.data.loadGeoJson('eez.json');
+  // map.data.loadGeoJson('eez.json');
+  // map.data.loadGeoJson('eeez.json');
+  // map.data.loadGeoJson('eez_nz.json');
+  map.data.loadGeoJson('eez_pacific_lr.geojson');
   // map.data.loadGeoJson('eez.pacific.json.formatted');
-  map.data.loadGeoJson('eez_shapes.json');
+  // map.data.loadGeoJson('eez_shapes.json');
   map.data.setStyle(function(feature) {
     var name = feature.getProperty("Name");
     if (name == "Countries") {
@@ -146,9 +149,9 @@ map.data.addListener('click', function(event) {
 if (feature) feature.setProperty('isColorful', false);
  event.feature.setProperty('isColorful', true);
  feature = event.feature;
- alert('Country is ' + event.feature.getProperty('country'));
+ alert(event.feature.getProperty('PolygonID') + event.feature.getProperty('Territory1') + ' (' + event.feature.getProperty('Sovereign1') + ')');
  // alert(JSON.stringify(feature));
- var infowindowoptions = {content: '<h3>'+event.feature.getProperty('country')+'</h3><p>asdf asdf asdf asdfasd fasd fasdfasdf asdf asd fasd fas dfas dfa sdf asdf asd fasd fas df asdf asdf asd fas dfa sdf asdf asd fas df asdf asdf as dfas df asdf asd fas dfas df as</p>', width: 800, maxWidth: 500, position: {lat: event.latLng.lat(), lng: event.latLng.lng()}};
+ var infowindowoptions = {content: '<h3>'+event.feature.getProperty('Territory1') + ' (' + event.feature.getProperty('Sovereign1') + ')' +'</h3><p>asdf asdf asdf asdfasd fasd fasdfasdf asdf asd fasd fas dfas dfa sdf asdf asd fasd fas df asdf asdf asd fas dfa sdf asdf asd fas df asdf asdf as dfas df asdf asd fas dfas df as</p>', width: 800, maxWidth: 500, position: {lat: event.latLng.lat(), lng: event.latLng.lng()}};
  var infowindow = new google.maps.InfoWindow(infowindowoptions);
  
  infowindow.open(map);
@@ -162,7 +165,7 @@ map.data.addListener('mouseover', function(event) {
  map.data.revertStyle();
  map.data.overrideStyle(event.feature, {strokeWeight: 8});
 
- var infowindowoptions = {content: '<h3>'+event.feature.getProperty('country')+'</h3>', maxWidth: 300, position: {lat: event.latLng.lat(), lng: event.latLng.lng()}};
+ var infowindowoptions = {maxHeight: 400, content: '<h3>'+event.feature.getProperty('Territory1')+' (' + event.feature.getProperty('Sovereign1') + ')'+'</h3>', maxWidth: 300, position: {lat: event.latLng.lat(), lng: event.latLng.lng()}};
  var infowindow = new google.maps.InfoWindow(infowindowoptions);
  
 // infowindow.open(map);
