@@ -219,7 +219,7 @@ if (!Detector.webgl) {
     _countryLookup = isoData;
     dataLoading.loadWorldPins( 'country_lat_lon.json', ( latLonData ) => {
       _latLonData = latLonData;
-      dataLoading.loadContentData( '../get_data.php', ( data ) => {
+      dataLoading.loadContentData( '../data.json', ( data ) => {
         // need to convert all the timestamps to JS dates
         const sectorColors = { 'Government and civil society, general': 'r', 'Post-secondary education': 'o', 'Agriculture': 'b', 'Transport and storage': 'g' };
         const mappedData = us.map( data, function mapData( point ) {
